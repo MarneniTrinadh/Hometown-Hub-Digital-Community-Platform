@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hometown Hub 🏘️ - Digital Community Platform</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind.config.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white transition-colors duration-200">
+
+  <!-- ================= TOP GUEST NOTICE BANNER ================= -->
+  <div id="guestNoticeBanner" class="bg-gradient-to-r from-emerald-600 via-teal-600 to-brand-700 text-white text-xs px-4 py-2 font-medium flex items-center justify-between shadow-xs">
+    <div class="max-w-7xl mx-auto w-full flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="inline-block bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Browsing as Guest</span>
+        <span>Welcome to Oakridge Village! Sign in or register to publish posts, message neighbors, host events, and join circles.</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="app.openAuthModal('signup')" class="px-3 py-1 bg-white text-brand-800 font-bold text-[11px] rounded-lg shadow-sm hover:bg-emerald-50 transition-colors">
+          Create Account
+        </button>
+        <button onclick="app.openAuthModal('login')" class="px-2.5 py-1 text-white hover:underline font-semibold text-[11px]">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-xs transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-3">
+        
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer select-none" onclick="app.navigate('feed')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white text-xl shadow-md shadow-brand-500/20">
+            🏘️
+          </div>
+          <div>
+            <span class="font-display font-extrabold text-xl tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
+              Hometown<span class="text-brand-600 dark:text-brand-400">Hub</span>
+            </span>
+            <span class="hidden sm:block text-[10px] font-medium tracking-wide uppercase text-slate-400 dark:text-slate-500 -mt-1">Oakridge Village Hub</span>
+          </div>
+        </div>
+
+        <!-- Global Search -->
+        <div class="flex-1 max-w-md hidden md:block relative">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </span>
+            <input type="text" id="globalSearchInput" placeholder="Search posts, events, communities, neighbors..." 
+                   class="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-full border border-transparent focus:border-brand-500 dark:focus:border-brand-500 outline-none transition-all">
+          </div>
+        </div>
+
+        <!-- Main Nav Tabs -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-semibold text-slate-600 dark:text-slate-300">
+          <button onclick="app.navigate('feed')" id="nav-btn-feed" class="px-3 py-2 rounded-lg hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <span>📰</span> Feed
+          </button>
+          <button onclick="app.navigate('events')" id="nav-btn-events" class="px-3 py-2 rounded-lg hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <span>📅</span> Events
+          </button>
+          <button onclick="app.navigate('communities')" id="nav-btn-communities" class="px-3 py-2 rounded-lg hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <span>👥</span> Communities
+          </button>
+          <button onclick="app.navigate('messages')" id="nav-btn-messages" class="relative px-3 py-2 rounded-lg hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <span>💬</span> Messages
+            <span id="navMsgBadge" class="hidden min-w-[18px] h-[18px] bg-brand-600 text-white text-[10px] font-bold rounded-full px-1 items-center justify-center">0</span>
+          </button>
+          <button onclick="app.navigate('admin')" id="nav-btn-admin" class="px-3 py-2 rounded-lg hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <span>🛡️</span> Moderation
+            <span id="navModBadge" class="hidden w-2 h-2 rounded-full bg-amber-500"></span>
+          </button>
+        </nav>
+
+        <!-- Right Toolbelt -->
+        <div class="flex items-center gap-2">
+          <!-- Dark / Light Mode Toggle -->
+          <button onclick="app.toggleTheme()" id="themeToggleBtn" title="Toggle Dark/Light Mode" 
+                  class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors border border-slate-200/60 dark:border-slate-800">
+            <svg id="themeIconSun" class="w-5 h-5 hidden text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <svg id="themeIconMoon" class="w-5 h-5 block text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+          </button>
+
+          <!-- Notification Drawer Toggle -->
+          <button onclick="app.toggleNotificationsDrawer()" title="Notifications" class="relative p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors border border-slate-200/60 dark:border-slate-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            <span id="notifBadge" class="hidden absolute top-1 right-1 min-w-[18px] h-[18px] bg-red-500 text-[10px] font-bold text-white flex items-center justify-center rounded-full px-1">0</span>
+          </button>
+
+          <!-- Quick Floating Chat Button -->
+          <button onclick="app.quickOpenMessenger()" title="Direct Messages" class="relative p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors border border-slate-200/60 dark:border-slate-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <span id="chatDot" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+          </button>
+
+          <!-- User State Container -->
+          <div id="authNavContainer" class="relative ml-1"></div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Bottom Tab Bar -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex justify-around text-xs font-semibold text-slate-600 dark:text-slate-400">
+    <button onclick="app.navigate('feed')" id="mob-nav-feed" class="flex flex-col items-center gap-1 py-1">
+      <span class="text-lg">📰</span><span>Feed</span>
+    </button>
+    <button onclick="app.navigate('events')" id="mob-nav-events" class="flex flex-col items-center gap-1 py-1">
+      <span class="text-lg">📅</span><span>Events</span>
+    </button>
+    <button onclick="app.navigate('communities')" id="mob-nav-communities" class="flex flex-col items-center gap-1 py-1">
+      <span class="text-lg">👥</span><span>Circles</span>
+    </button>
+    <button onclick="app.navigate('messages')" id="mob-nav-messages" class="flex flex-col items-center gap-1 py-1 relative">
+      <span class="text-lg">💬</span><span>Chat</span>
+      <span id="mobMsgBadge" class="hidden absolute top-0 right-2 w-2 h-2 rounded-full bg-brand-500"></span>
+    </button>
+    <button onclick="app.navigate('admin')" id="mob-nav-admin" class="flex flex-col items-center gap-1 py-1">
+      <span class="text-lg">🛡️</span><span>Admin</span>
+    </button>
+  </div>
+
+  <!-- ================= MAIN VIEWS ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-16 lg:mb-6">
+    <div id="view-feed" class="view-panel"></div>
+    <div id="view-events" class="view-panel hidden"></div>
+    <div id="view-communities" class="view-panel hidden"></div>
+    <div id="view-messages" class="view-panel hidden"></div>
+    <div id="view-admin" class="view-panel hidden"></div>
+  </main>
+
+  <!-- ================= USER DIRECTORY / NEW MESSAGE PICKER MODAL ================= -->
+  <div id="newChatModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 max-w-md w-full rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">💬</span>
+          <h3 class="font-display font-extrabold text-base text-slate-900 dark:text-white">Start Conversation</h3>
+        </div>
+        <button onclick="app.closeNewChatModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl font-bold leading-none">&times;</button>
+      </div>
+
+      <div class="py-3">
+        <input type="text" id="memberSearchInput" oninput="app.renderMemberPickerList(this.value)" placeholder="Search neighbors by name, street, or interest..." 
+               class="w-full text-xs px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-slate-800 dark:text-slate-100">
+      </div>
+
+      <div id="memberPickerList" class="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 space-y-1"></div>
+    </div>
+  </div>
+
+  <!-- ================= EDIT PROFILE MODAL ================= -->
+  <div id="editProfileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 max-w-md w-full rounded-2xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[92vh] overflow-y-auto">
+      <button onclick="app.closeEditProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl font-bold">&times;</button>
+      
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xl font-bold">
+          👤
+        </div>
+        <div>
+          <h3 class="font-display font-extrabold text-lg text-slate-900 dark:text-white">Edit Resident Profile</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Update how your neighbors see you in Oakridge Village.</p>
+        </div>
+      </div>
+
+      <form onsubmit="app.handleSaveProfile(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Profile Picture</label>
+          <div class="flex items-center gap-3 mb-2.5">
+            <img id="editProfileAvatarPreview" class="w-14 h-14 rounded-full object-cover border-2 border-brand-500 shadow-xs" src="" alt="Avatar preview">
+            <div class="flex-1">
+              <input type="url" id="editProfileAvatarInput" oninput="app.previewEditAvatar(this.value)" placeholder="https://images.unsplash.com/photo-..." class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+              <p class="text-[10px] text-slate-400 mt-0.5">Paste image URL or pick preset:</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 overflow-x-auto pb-1">
+            <button type="button" onclick="app.selectPresetAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200')" class="w-7 h-7 rounded-full overflow-hidden border border-slate-300 hover:border-brand-500 shrink-0">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="w-full h-full object-cover">
+            </button>
+            <button type="button" onclick="app.selectPresetAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200')" class="w-7 h-7 rounded-full overflow-hidden border border-slate-300 hover:border-brand-500 shrink-0">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" class="w-full h-full object-cover">
+            </button>
+            <button type="button" onclick="app.selectPresetAvatar('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200')" class="w-7 h-7 rounded-full overflow-hidden border border-slate-300 hover:border-brand-500 shrink-0">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" class="w-full h-full object-cover">
+            </button>
+            <button type="button" onclick="app.selectPresetAvatar('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200')" class="w-7 h-7 rounded-full overflow-hidden border border-slate-300 hover:border-brand-500 shrink-0">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" class="w-full h-full object-cover">
+            </button>
+            <button type="button" onclick="app.selectPresetAvatar('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200')" class="w-7 h-7 rounded-full overflow-hidden border border-slate-300 hover:border-brand-500 shrink-0">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100" class="w-full h-full object-cover">
+            </button>
+            <button type="button" onclick="app.selectPresetAvatar('https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200')" class="w-7 h-7 rounded-full overflow-hidden border border-slate-300 hover:border-brand-500 shrink-0">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100" class="w-full h-full object-cover">
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Full Name <span class="text-red-500">*</span></label>
+          <input type="text" id="editProfileNameInput" required class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Neighborhood / Street <span class="text-red-500">*</span></label>
+          <input type="text" id="editProfileNeighborhoodInput" required placeholder="e.g. Sunset Hill, Willow Creek" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Bio / About Me</label>
+          <textarea id="editProfileBioInput" rows="2.5" placeholder="Share your passions or neighborhood projects..." class="w-full text-xs px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100 resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Interests / Tags</label>
+          <input type="text" id="editProfileInterestsInput" placeholder="Gardening, Dogs, Baking, Solar" class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="app.closeEditProfileModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition-all">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= HOST / CREATE EVENT MODAL ================= -->
+  <div id="createEventModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 max-w-lg w-full rounded-2xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[92vh] overflow-y-auto">
+      <button onclick="app.closeCreateEventModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl font-bold">&times;</button>
+      
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xl font-bold">
+          📅
+        </div>
+        <div>
+          <h3 class="font-display font-extrabold text-lg text-slate-900 dark:text-white">Host an Oakridge Event</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Organize a neighborhood cleanup, workshop, block party, or yard sale.</p>
+        </div>
+      </div>
+
+      <form onsubmit="app.handleCreateEvent(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Event Title <span class="text-red-500">*</span></label>
+          <input type="text" id="evTitleInput" required placeholder="e.g. Sunset Hill Annual Block Party" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Category <span class="text-red-500">*</span></label>
+            <select id="evCategoryInput" class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+              <option value="Cleanups">🌱 Cleanups & Greenery</option>
+              <option value="Festivals">🎉 Festivals & Block Parties</option>
+              <option value="Workshops">🛠️ Workshops & Skills</option>
+              <option value="Yard Sale">🏷️ Yard & Garage Sales</option>
+              <option value="Sports">⚽ Sports & Recreation</option>
+              <option value="Kids & Family">🎈 Kids & Family</option>
+              <option value="Meetup">☕ Social Meetups</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Date & Time <span class="text-red-500">*</span></label>
+            <input type="text" id="evDateInput" required placeholder="e.g. Sat, Nov 21 • 10:00 AM - 2:00 PM" class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Location / Venue <span class="text-red-500">*</span></label>
+            <input type="text" id="evLocationInput" required placeholder="e.g. Oakridge Park Gazebo" class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Max Capacity (Optional)</label>
+            <input type="number" id="evCapacityInput" min="1" placeholder="e.g. 50" class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Description <span class="text-red-500">*</span></label>
+          <textarea id="evDescInput" rows="2.5" required placeholder="Describe schedule, what neighbors should bring, etc." class="w-full text-xs px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100 resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Cover Photo URL</label>
+          <input type="url" id="evCoverInput" placeholder="https://images.unsplash.com/..." class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          <div class="flex items-center gap-2 overflow-x-auto mt-2 pb-1">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0">Presets:</span>
+            <button type="button" onclick="app.setEventCoverPreset('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800')" class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 hover:text-brand-600 shrink-0">Party</button>
+            <button type="button" onclick="app.setEventCoverPreset('https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800')" class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 hover:text-brand-600 shrink-0">Cleanup</button>
+            <button type="button" onclick="app.setEventCoverPreset('https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800')" class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 hover:text-brand-600 shrink-0">Market</button>
+            <button type="button" onclick="app.setEventCoverPreset('https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800')" class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 hover:text-brand-600 shrink-0">Garden</button>
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="app.closeCreateEventModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition-all">Publish Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= AUTH MODAL ================= -->
+  <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 max-w-md w-full rounded-2xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+      <button onclick="app.closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl font-bold">&times;</button>
+      
+      <div class="flex items-center gap-6 border-b border-slate-200 dark:border-slate-800 pb-3 mb-5">
+        <button onclick="app.setAuthTab('signup')" id="authTabSignup" class="font-display font-extrabold text-lg text-brand-600 dark:text-brand-400 border-b-2 border-brand-500 pb-2 -mb-3.5 transition-colors">
+          Create Account
+        </button>
+        <button onclick="app.setAuthTab('login')" id="authTabLogin" class="font-display font-bold text-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 pb-2 -mb-3.5 transition-colors">
+          Sign In
+        </button>
+      </div>
+
+      <p id="authSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+        Join Oakridge Village neighbors to send private messages, post updates, and host events.
+      </p>
+
+      <form onsubmit="app.handleAuthSubmit(event)">
+        <div id="signupSpecificFields" class="space-y-3 mb-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Full Name <span class="text-red-500">*</span></label>
+            <input type="text" id="authNameInput" placeholder="e.g. Alex Morgan" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Neighborhood / Sector <span class="text-red-500">*</span></label>
+            <input type="text" id="authNeighborhoodInput" placeholder="e.g. Oakridge Pines, Sunset Hill" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Email Address <span class="text-red-500">*</span></label>
+            <input type="email" id="authEmailInput" required placeholder="neighbor@oakridge.org" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password <span class="text-red-500">*</span></label>
+            <input type="password" id="authPasswordInput" required placeholder="••••••••" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <button type="submit" id="authSubmitBtn" class="w-full mt-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md shadow-brand-500/20 transition-all flex items-center justify-center gap-1.5">
+          <span>Create My Account & Join</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= GUEST PROMPT MODAL ================= -->
+  <div id="guestPromptModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 max-w-sm w-full rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center relative">
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl shadow-inner">
+        🏘️
+      </div>
+      <h3 id="guestPromptTitle" class="font-display font-extrabold text-lg text-slate-900 dark:text-white">Resident Action Required</h3>
+      <p id="guestPromptDesc" class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+        Guests have read-only access. Create your resident profile or sign in to participate in 1-on-1 chats and community discussions!
+      </p>
+      
+      <div class="mt-5 space-y-2">
+        <button onclick="app.guestModalGoSignup()" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md shadow-brand-500/20 transition-all">
+          Create Account (30 seconds)
+        </button>
+        <button onclick="app.guestModalGoLogin()" class="w-full py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+          Sign In
+        </button>
+        <button onclick="app.closeGuestPromptModal()" class="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-medium pt-1">
+          Stay as Guest
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CREATE COMMUNITY MODAL ================= -->
+  <div id="createCommunityModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 max-w-lg w-full rounded-2xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+      <button onclick="app.closeCreateCommunityModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl font-bold">&times;</button>
+      
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xl font-bold">
+          🌱
+        </div>
+        <div>
+          <h3 class="font-display font-extrabold text-lg text-slate-900 dark:text-white">Create a Community Circle</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Launch a local subgroup for your street, interest, or club.</p>
+        </div>
+      </div>
+
+      <form onsubmit="app.handleCreateCommunity(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Community Name <span class="text-red-500">*</span></label>
+          <input type="text" id="commNameInput" required placeholder="e.g. Oakridge Book Lovers & Tea Guild" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Category</label>
+            <select id="commCategoryInput" class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+              <option value="Hobbies & Gardening">🌱 Hobbies & Gardening</option>
+              <option value="Public Safety">🛡️ Public Safety</option>
+              <option value="Food & Culinary">🥖 Food & Culinary</option>
+              <option value="Outdoors & Fitness">🐕 Outdoors & Fitness</option>
+              <option value="Parents & Families">🍼 Parents & Families</option>
+              <option value="Arts & Books">📚 Arts & Books</option>
+              <option value="Civic Improvement">🏛️ Civic Improvement</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Neighborhood Area</label>
+            <input type="text" id="commNeighborhoodInput" placeholder="e.g. Sunset Hill or Village-Wide" class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Description <span class="text-red-500">*</span></label>
+          <textarea id="commDescInput" rows="2.5" required placeholder="What will neighbors share or coordinate in this circle?" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100 resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Cover Photo URL (optional)</label>
+          <input type="url" id="commCoverInput" placeholder="https://images.unsplash.com/photo-..." class="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="app.closeCreateCommunityModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition-all">Launch Community</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= NOTIFICATION DRAWER ================= -->
+  <div id="notificationBackdrop" onclick="app.toggleNotificationsDrawer()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden transition-opacity"></div>
+  <aside id="notificationDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <h3 class="font-display font-bold text-base text-slate-900 dark:text-white">Notifications</h3>
+        <span id="drawerUnreadCount" class="badge-pill bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300">0 new</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="app.markAllNotificationsRead()" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-semibold">Mark read</button>
+        <button onclick="app.toggleNotificationsDrawer()" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+    </div>
+    <div id="notificationList" class="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 p-2"></div>
+  </aside>
+
+  <!-- ================= REPORT MODAL ================= -->
+  <div id="reportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 max-w-md w-full rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <h3 class="font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span>🚩</span> Report Community Content
+        </h3>
+        <button onclick="app.closeReportModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold">&times;</button>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Help keep Oakridge safe and constructive. Why should moderators inspect this post?</p>
+      <div class="mt-4 space-y-2 text-xs text-slate-700 dark:text-slate-200">
+        <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer">
+          <input type="radio" name="reportReason" value="Spam or Unverified Ad" checked class="text-brand-600">
+          <span>Spam or misleading advertisement</span>
+        </label>
+        <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer">
+          <input type="radio" name="reportReason" value="Harassment or Hostility" class="text-brand-600">
+          <span>Harassment, hostility, or disrespect</span>
+        </label>
+      </div>
+      <div class="mt-6 flex justify-end gap-2">
+        <button onclick="app.closeReportModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
+        <button onclick="app.submitReport()" class="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm">Submit Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ================= CORE JAVASCRIPT APPLICATION ================= -->
+  <script src="js/app.js"></script>
+</body>
+</html>
